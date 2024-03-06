@@ -6,11 +6,10 @@ from sqlalchemy.engine.url import URL
 
 ## Criando tabelas
 with open("coleta-youtube/config.json") as jsonfile:
-    db_config = load(jsonfile)['database_volt']
+    db_config = load(jsonfile)['database_lucas']
 
 engine = create_engine(URL.create(db_config['drivername'], db_config['username'], db_config['password'], db_config['host'],
-                                  db_config['port'], db_config['database']),
-                       connect_args={'options': '-csearch_path={}'.format(db_config['schema'])})
+                                  db_config['port'], db_config['database']))
 
 
 Playlist.__table__.create(bind=engine, checkfirst=True)

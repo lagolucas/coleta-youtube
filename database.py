@@ -7,11 +7,10 @@ from sqlalchemy.engine.url import URL
 from sqlalchemy.orm import Session, sessionmaker
 
 with open("coleta-youtube/config.json") as jsonfile:
-    db_config = load(jsonfile)['database_volt']
+    db_config = load(jsonfile)['database_lucas']
 
 engine = create_engine(URL.create(db_config['drivername'], db_config['username'], db_config['password'], db_config['host'],
-                                  db_config['port'], db_config['database']),
-                       connect_args={'options': '-csearch_path={}'.format(db_config['schema'])})
+                                  db_config['port'], db_config['database']))
 
 
 def get_terms():
@@ -85,7 +84,7 @@ def lista_videos(captionless, days):
         return session.query(Video).order_by(desc(Video.id)).all()
     else:
         return session.query(Video).filter(Video.has_caption.is_(False)).filter(
-            Video.creted_at > datetime.date.today() - datetime.timedelta(days=days)).all()
+            Video.created_at > datetime.date.today() - datetime.timedelta(days=days)).all()
 
 
 def insere_captions(captions, video):
@@ -93,13 +92,17 @@ def insere_captions(captions, video):
     session = Session()
 
     video = session.query(Video).filter_by(yt_video_id=video).first()
+    count = 0
+
     if (video.has_caption == False):
+        print("entramos")
         video.has_caption = True
 
         for caption in captions:
-            if 'line' in caption:
-                session.add(Caption(
-                    video_id=video.id, order=caption['minute'], minute=caption['minute'], line=caption['line']))
+            print(count, " - ", caption)
+            session.add(Caption(
+                video_id=video.id, order=count, line=caption))
+            count += 1
 
         session.commit()
         session.close()

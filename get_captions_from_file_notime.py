@@ -11,28 +11,13 @@ for folder in os.listdir('coleta-youtube/captions/'):
 		with open(os.path.join('coleta-youtube/captions/', filename), 'r', encoding="utf8") as f:
 			
 			insere_video(filename.split('.')[0])
-
 			data = f.read()
 			a = []
 			b = {}
 			for line in data.splitlines():
 				if line:
-					if re.match(r'^([0-9]+:[0-9]+)$', line):
-						b["minute"] = int(line.split(':')[0])*60 + int(line.split(':')[1])
-						print(b["minute"])
-					else:
-						if 'line' in b:
-							b['line'] = b['line'] + " " + line
-						else:
-							b['line'] = line
-						
-				else:
-					if b:
-						a.append(b)
-						b = {}
-			if b:
-				a.append(b)
-				b = {}
+					a.append(line)
+
 			print(folder)	
 			print(filename.split('.')[0])
 			insere_captions(a, filename.split('.')[0])
